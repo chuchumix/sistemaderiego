@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/fontawesome.min.css">
+
+</head>
+
+
+<body>
+    <div>
+        <h1 align="center" class="" style="padding-top: 15px; padding-bottom: 15px;">
+            <img src="assets/img/riego.gif" alt="" width="70px" height="80px" style="margin-top: -60px;">
+            <div id="para_div" style="display: inline-block;">
+                <p><strong>Sistema de riego</strong></p>
+                <p id="refl"><strong>Sistema de riego</strong></p>
+            </div>
+            <img src="assets/img/riego.gif" alt="" width="70px" height="80px" style="margin-top: -60px;">
+        </h1>
+    </div>
+
+
+    <div class="centrado">
+        <form method="GET">
+            <label for="de" class="colorBlue" style="padding-right: 5px; padding-top: 4px;"> <h5>De:</h5> </label>
+            <input type="date" class="form-control inp" placeholder="dd/mm/yyyy hh:mm:ss" id="date1">
+            <input type="time" step="1" class="form-control inp" placeholder="dd/mm/yyyy hh:mm:ss" id="time1">
+            <label for="a" class="colorBlue" style="padding-right: 5px; padding-left: 5px; padding-top: 4px;"><h5>A:</h5></label>
+            <input type="date" class="form-control inp" placeholder="dd/mm/yyyy hh:mm:ss" id="date2">
+            <input type="time" step="1" class="form-control inp" placeholder="dd/mm/yyyy hh:mm:ss" id="time2">
+            <select id="valor" class="select-css">
+                <option value="ultimos">Últimos 10</option>
+                <option value="fechas">Rango de fechas</option>
+                <option value="tiempo">Rango de tiempo</option>
+                <option value="maximo">Máximo entre dos fechas</option>
+                <option value="minimo">Mínimo entre dos fechas</option>
+                <option value="promedio">Promedio entre dos fechas</option>
+            </select>
+            <button type="button" class="btn boton" id="buscar" (click)="obtener()"> Buscar </button>
+        </form>
+    </div>
+    <br>
+    <div class="table-responsive fondo" id="tablaDatos">
+        <table class="table table-hover" style="border: 1px solid rgba(112, 112, 112, .3)">
+            <thead class="thead-dark colorBlue" style="text-align: center;">
+                <tr>
+                    <th scope="col">No.</th>
+                    <th scope="col"><img src="assets/img/reloj.gif" alt="" width="30px" height="30px" style="">Fecha-Hora<img src="assets/img/reloj.gif" alt="" width="30px" height="30px" style=""></th>
+                    <th scope="col"><img src="assets/img/fuego.gif" alt="" width="30px" height="30px" style="">Temperatura <img src="assets/img/nieve.gif" alt="" width="30px" height="30px" style=""></th>
+                    <th class="tab-right" scope="col"><img src="assets/img/lluvia.gif" alt="" width="30px" height="30px" style="">Humedad <img src="assets/img/lluvia.gif" alt="" width="30px" height="30px" style=""></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let dato of datos; let i = index;" style="text-align: center;">
+                    <td class="colorBlue">
+                        <Strong> {{i + 1}} </Strong>
+                    </td>
+                    <td class="colorBlue tab-left">
+                        <strong> {{ dato.fechaHora }} </strong>
+
+                    </td>
+                    <td class="colorBlue tab-left">
+                        <strong> {{ dato.temperatura }}° </strong>
+
+                    </td>
+                    <td class="colorBlue tab-left">
+                        <strong> {{ dato.valor/10.23 | number : 0.00 }}% </strong>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="table-responsive fondo" style="width: 200px; margin-left: 47%;" id="tablaPromedio">
+        <table class="table table-hover" style="border: 1px solid rgba(112, 112, 112, .3);">
+            <thead class="thead-dark colorBlue" style="text-align: center;">
+                <th scope="col"><img url="" src="assets/img/planta.gif" alt="" width="30px" height="30px" style="">Promedio<img src="assets/img/planta.gif" alt="" width="30px" height="30px" style=""></th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let dato of datos; let i = index;" style="text-align: center;">
+                    <td class="colorBlue">
+                        <Strong> {{ dato.Promedio | number : 0.00 }} </Strong>
+                    </td>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="grafica" style="display: block;">
+        <canvas id="graf" style="margin-top: 50px; padding: 0 30px 50px 30px; display: none;" baseChart width="300px" height="150px" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions" [colors]="lineChartColors" [legend]="lineChartLegend"
+            [chartType]="lineChartType" [plugins]="lineChartPlugins">
+        </canvas>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</body>
+
+</html>
